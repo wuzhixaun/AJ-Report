@@ -19,9 +19,9 @@ spring:
   messages:
     basename: i18n/messages
   datasource:
-    url: jdbc:mysql://10.108.26.197:3306/aj_report?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://wuzx.cool:30006/aj_report?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
-    password: appuser@anji
+    password: 123456
   #数据源连接池配置
   druid:
     initial-size: 10 # 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时
