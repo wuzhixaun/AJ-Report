@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aj-report-ui
+  namespace: blade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aj-report-ui
+  template:
+    metadata:
+      labels:
+        app: aj-report-ui
+    spec:
+      containers:
+        - name: aj-report-ui
+          image: $image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aj-report-ui
+  namespace: blade
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      name: aj-report-ui
+      nodePort: 30006
+  selector:
+    app: aj-report-ui
+  type: NodePort
