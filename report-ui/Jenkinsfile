@@ -1,7 +1,7 @@
 def label = "slave-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-  containerTemplate(name: 'node', image: 'doux/cnpm:latest', command: 'cat', ttyEnabled: true),
+  containerTemplate(name: 'cnpm', image: 'doux/cnpm:latest', command: 'cat', ttyEnabled: true),
   containerTemplate(name: 'docker', image: 'docker:latest', command: 'cat', ttyEnabled: true),
   containerTemplate(name: 'kubectl', image: 'cnych/kubectl', command: 'cat', ttyEnabled: true)
 ], serviceAccount: 'jenkins-admin', volumes: [
@@ -26,7 +26,7 @@ podTemplate(label: label, containers: [
     }
 
     stage('代码编译打包') {
-      container('node') {
+      container('cnpm') {
         echo "代码编译打包阶段"
         sh "cd report-ui && npm install && npm run build:dev"
       }
