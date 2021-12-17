@@ -4,11 +4,11 @@
 command -v npm >/dev/null 2>&1 || { echo >&2 "I require node.js v14.16.0+ but it's not installed.  Aborting."; sleep 5; exit 1; }
 command -v mvn >/dev/null 2>&1 || { echo >&2 "I require maven 3.5 + but it's not installed.  Aborting."; sleep 5; exit 1; }
 
-cd `dirname $0`
-BuildDir=`pwd` #工程根目录
+  cd `dirname $0`
+  BuildDir=`pwd` #工程根目录
 
-echo "build web"
-cd $BuildDir/report-ui
+  echo "build web"
+  cd $BuildDir/report-ui
 npm install >/dev/null 2>&1
 npm run build:prod >/dev/null 2>&1
 

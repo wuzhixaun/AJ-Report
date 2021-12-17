@@ -1,7 +1,7 @@
 def label = "slave-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-  containerTemplate(name: 'node', image: 'node:lts', command: 'cat', ttyEnabled: true),
+  containerTemplate(name: 'node', image: 'doux/cnpm:latest', command: 'cat', ttyEnabled: true),
   containerTemplate(name: 'docker', image: 'docker:latest', command: 'cat', ttyEnabled: true),
   containerTemplate(name: 'kubectl', image: 'cnych/kubectl', command: 'cat', ttyEnabled: true)
 ], serviceAccount: 'jenkins-admin', volumes: [
@@ -28,8 +28,7 @@ podTemplate(label: label, containers: [
     stage('代码编译打包') {
       container('node') {
         echo "代码编译打包阶段"
-        cd report-ui
-        sh "npm install && npm run build:dev"
+        sh "cd report-ui && npm install && npm run build:dev"
       }
     }
 
@@ -38,6 +37,7 @@ podTemplate(label: label, containers: [
           container('docker') {
             echo "3. 构建 Docker 镜像阶段"
             sh """
+              cd report-ui
               docker login ${registryUrl} -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
               docker build -t ${image} .
               docker push ${image}
@@ -50,6 +50,7 @@ podTemplate(label: label, containers: [
           container('kubectl') {
             echo "部署到k8s集群"
             sh """
+              cd report-ui
               sed -i 's#\$image#${image}#' deployment.yaml
               """
             kubernetesDeploy(enableConfigSubstitution: false, kubeconfigId: 'kubeconfig1', configs: 'deployment.yaml')
