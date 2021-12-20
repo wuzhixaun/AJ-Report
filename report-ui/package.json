@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "cross-env NODE_ENV=production node build/build.js",
-    "build:dev": "cross-env NODE_ENV=development node build/build.js",
-    "build:test": "cross-env NODE_ENV=testing node build/build.js",
-    "build:prod": "cross-env NODE_ENV=production node build/build.js"
+    "build": " NODE_ENV=production node build/build.js",
+    "build:dev": " NODE_ENV=development node build/build.js",
+    "build:test": " NODE_ENV=testing node build/build.js",
+    "build:prod": " NODE_ENV=production node build/build.js"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-decoupled-document": "^23.1.0",
