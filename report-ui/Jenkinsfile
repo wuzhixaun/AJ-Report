@@ -28,7 +28,7 @@ podTemplate(label: label, containers: [
     stage('代码编译打包') {
       container('node') {
         echo "代码编译打包阶段"
-        sh "cd report-ui && cnpm i && cnpm run buildv"
+        sh "cd report-ui && cnpm i && cnpm run build"
       }
     }
 
