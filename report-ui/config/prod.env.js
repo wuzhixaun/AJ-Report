@@ -1,5 +1,5 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  BASE_API: '"http://aj-report:9095"'
+  BASE_API: '"http://wuzx.cool:30012"'
 }
