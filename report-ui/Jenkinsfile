@@ -50,7 +50,7 @@ podTemplate(label: label, containers: [
           container('kubectl') {
             echo "部署到k8s集群"
             sh """
-              cd report-ui
+              cp -rf ./report-ui/deployment.yaml ./
               sed -i 's#\$image#${image}#' deployment.yaml
               """
             kubernetesDeploy(enableConfigSubstitution: false, kubeconfigId: 'kubeconfig1', configs: 'deployment.yaml')
