@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aj-report
+  namespace: blade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aj-report
+  #设置滚动升级策略
+  #Kubernetes在等待设置的时间后才开始进行升级，例如5秒
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        #升级过程中Deployment控制器最多可以删除多少个旧Pod，主要用于提供缓冲时间
+        maxUnavailable: 1
+        #升级过程中最多可以比原先设置多出的Pod数量
+        maxSurge: 1
+
+  template:
+    metadata:
+      labels:
+        app: aj-report
+    spec:
+      restartPolicy: Always
+        #构建初始化镜像(通过初始化镜像的方式集成SkyWalking Agent)
+      initContainers:
+        - image: registry.cn-shenzhen.aliyuncs.com/wuzhixuan/sw-agent-sidecar:latest
+          name: sw-agent-sidecar
+          imagePullPolicy: IfNotPresent
+          command: [ "sh" ]
+          args:
+            [
+                    "-c",
+                    "mkdir -p /skywalking/agent && cp -r /usr/skywalking/agent/* /skywalking/agent",
+            ]
+          volumeMounts:
+            - mountPath: /skywalking/agent
+              name: sw-agent
+      containers:
+        - name: aj-report
+          image: $image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9095
+              protocol: TCP
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            #这里通过JAVA_TOOL_OPTIONS，而不是JAVA_OPTS可以实现不通过将agent命令加入到java应用jvm参数而实现agent的集成
+            - name: JAVA_TOOL_OPTIONS
+              value: -javaagent:/usr/skywalking/agent/skywalking-agent.jar
+            - name: SW_AGENT_NAME
+              value: aj-report
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+                # FQDN: servicename.namespacename.svc.cluster.local
+              value: skywalking-oap.kube-ops.svc.cluster.local:11800
+          volumeMounts:
+              - mountPath: /usr/skywalking/agent
+                name: sw-agent
+      volumes:
+        - name: sw-agent
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aj-report
+  namespace: blade
+spec:
+  ports:
+    - port: 9095
+      targetPort: 9095
+      name: aj-report
+  selector:
+    app: aj-report

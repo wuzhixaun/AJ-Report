@@ -31,7 +31,7 @@ spec:
     - port: 80
       targetPort: 80
       name: aj-report-ui
-      nodePort: 30006
+      nodePort: 30010
   selector:
     app: aj-report-ui
   type: NodePort
